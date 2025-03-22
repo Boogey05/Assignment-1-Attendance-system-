@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module Details - College Attendance System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4154f1;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .navbar-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .content-area {
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        
+        .nav-menu .nav-link {
+            color: var(--primary-color);
+            padding: 10px 15px;
+            transition: all 0.3s;
+            border-radius: 5px;
+        }
+        
+        .nav-menu .nav-link:hover, 
+        .nav-menu .nav-link.active {
+            background-color: rgba(65, 84, 241, 0.1);
+        }
+        
+        .nav-menu .nav-link i {
+            margin-right: 10px;
+        }
+        
+        .dashboard-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .good-value {
+            color: var(--success-color);
+        }
+        
+        .warning-value {
+            color: var(--warning-color);
+        }
+        
+        .danger-value {
+            color: var(--danger-color);
+        }
+        
+        .attendance-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-good {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+        }
+        
+        .status-warning {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+        }
+        
+        .status-danger {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .module-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .module-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-right: 15px;
+        }
+        
+        .module-icon.code {
+            background-color: rgba(65, 84, 241, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .module-icon.network {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+        }
+        
+        .module-icon.software {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+        }
+        
+        .module-icon.os {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .module-icon.math {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+        
+        .module-icon.ai {
+            background-color: rgba(155, 89, 182, 0.1);
+            color: #9b59b6;
+        }
+        
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .progress-good {
+            background-color: var(--success-color);
+        }
+        
+        .progress-warning {
+            background-color: var(--warning-color);
+        }
+        
+        .progress-danger {
+            background-color: var(--danger-color);
+        }
+        
+        .stats-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .stats-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+        
+        .stats-icon.attended {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+        }
+        
+        .stats-icon.missed {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .stats-icon.remaining {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+        
+        .stats-icon.canmiss {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+        }
+        
+        .stats-info {
+            flex: 1;
+        }
+        
+        .stats-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .stats-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .attendance-chart {
+            height: 300px;
+            margin-top: 20px;
+        }
+        
+        .footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem 0;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="d-flex align-items-center">
+            <img src="logo.png" alt="College Logo" class="rounded-circle me-2">
+            <a href="dashboard.html" class="navbar-logo">College Attendance System</a>
+        </div>
+        <div class="user-info">
+            <img src="Me.jpeg" alt="Student Avatar">
+            <div>
+                <h6 id="studentNameHeader" class="mb-0">Student Name</h6>
+                <small id="studentIdHeader" class="text-muted">Student ID</small>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="nav-menu">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="timetable.html" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i> My Timetable
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="profile.html" class="nav-link">
+                        <i class="fas fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="nav-item ms-auto">
+                    <a href="#" class="nav-link" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="content-area">
+            <div class="dashboard-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h4 id="moduleTitle">Module Details</h4>
+                        <p class="text-muted" id="moduleCode">Module Code</p>
+                    </div>
+                    <a href="dashboard.html" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    </a>
+                </div>
+                
+                <div class="module-info">
+                    <div class="module-icon" id="moduleIcon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div>
+                        <div class="d-flex align-items-center mb-2">
+                            <h5 class="mb-0 me-3" id="moduleName">Module Name</h5>
+                            <span class="attendance-status" id="moduleStatus">Status</span>
+                        </div>
+                        <p class="mb-0"><strong>Instructor:</strong> <span id="moduleInstructor">Mr. Pema Galey</span></p>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="h4 mb-0" id="attendancePercent">92.5%</div>
+                        <small class="text-muted">Requirement: <span id="attendanceRequirement">90%</span></small>
+                    </div>
+                    <div class="progress mb-4">
+                        <div class="progress-bar" id="attendanceProgress" role="progressbar" style="width: 92.5%" 
+                            aria-valuenow="92.5" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+                
+                <div class="row" id="statsContainer">
+                    <div class="col-md-6 col-lg-3 mb-3">
+                        <div class="stats-card">
+                            <div class="stats-icon attended">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stats-info">
+                                <div class="stats-value" id="attendedClasses">37/40</div>
+                                <div class="stats-label">Classes Attended</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-3">
+                        <div class="stats-card">
+                            <div class="stats-icon missed">
+                                <i class="fas fa-times-circle"></i>
+                            </div>
+                            <div class="stats-info">
+                                <div class="stats-value" id="missedClasses">3</div>
+                                <div class="stats-label">Classes Missed</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-3">
+                        <div class="stats-card">
+                            <div class="stats-icon remaining">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="stats-info">
+                                <div class="stats-value" id="remainingClasses">10</div>
+                                <div class="stats-label">Remaining Classes</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3 mb-3">
+                        <div class="stats-card">
+                            <div class="stats-icon canmiss">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stats-info">
+                                <div class="stats-value" id="canMissClasses">2</div>
+                                <div class="stats-label">Can Miss</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card mt-4">
+                    <h5 class="mb-3">Attendance Overview</h5>
+                    <div class="attendance-chart">
+                        <canvas id="attendanceChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="dashboard-card mt-4">
+                    <h5 class="mb-3">Module Information</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Credits:</strong> <span id="moduleCredits">12</span></p>
+                            <p><strong>Duration:</strong> <span id="moduleDuration">50 hours</span></p>
+                            <p><strong>Room:</strong> <span id="moduleRoom">IT-301</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Schedule:</strong> <span id="moduleSchedule">Monday-Satuarday </span></p>
+                            <p><strong>Semester:</strong> <span id="moduleSemester">Spring 2025</span></p>
+                            <p><strong>Department:</strong> <span id="moduleDepartment">Information Technology</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 College Attendance System. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const studentNames = {
+                '02230131': 'Kinley',
+                '02230132': 'Chimi',
+                '02230133': 'Dorji',
+                '02230134': 'Karma',
+                '02230135': 'Passang'
+            };
+            
+            const studentName = studentNames[currentUser] || 'Student';
+            document.getElementById('studentNameHeader').textContent = studentName;
+            document.getElementById('studentIdHeader').textContent = currentUser;
+            
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            });
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const moduleId = parseInt(urlParams.get('id')) || 1;
+            
+            const moduleData = {
+                1: { 
+                    name: 'Web Application Development', 
+                    code: 'CTE204', 
+                    instructor: 'Mr. Pema Galey',
+                    icon: 'code',
+                    iconClass: 'code',
+                    credits: 12,
+                    duration: '50 hours',
+                    room: 'IT-105',
+                    schedule: 'Monday-Satuarday',
+                    semester: 'Spring 2025',
+                    department: 'Information Technology'
+                },
+                2: { 
+                    name: 'Introduction to IoT', 
+                    code: 'NWC202', 
+                    instructor: 'Mr. Parshu Ram',
+                    icon: 'network-wired',
+                    iconClass: 'network',
+                    credits: 12,
+                    duration: '50 hours',
+                    room: 'IT-203',
+                    schedule: 'Monday-Satuarday',
+                    semester: 'Spring 2025',
+                    department: 'Information Technology'
+                },
+                3: { 
+                    name: 'Software Engineering', 
+                    code: 'CTE206', 
+                    instructor: 'Mr. Tsheten Dorji',
+                    icon: 'laptop-code',
+                    iconClass: 'software',
+                    credits: 12,
+                    duration: '50 hours',
+                    room: 'IT-302',
+                    schedule: 'Monday-Satuarday',
+                    semester: 'Spring 2025',
+                    department: 'Information Technology'
+                },
+                4: { 
+                    name: 'Operating Systems', 
+                    code: 'CTE205', 
+                    instructor: 'Mr. Pema Thinley',
+                    icon: 'desktop',
+                    iconClass: 'os',
+                    credits: 12,
+                    duration: '50 hours',
+                    room: 'IT-305',
+                    schedule: 'Monday-Satuarday',
+                    semester: 'Spring 2025',
+                    department: 'Information Technology'
+                },
+                5: { 
+                    name: 'Computational Mathematics', 
+                    code: 'MAT206', 
+                    instructor: 'Me. Jigme Namgyal',
+                    icon: 'calculator',
+                    iconClass: 'math',
+                    credits: 3,
+                    duration: '50 hours',
+                    room: 'SC-201',
+                    schedule: 'Monday-Satuarday',
+                    semester: 'Spring 2025',
+                    department: 'Mathematics'
+                },
+                6: { 
+                    name: 'Artificial Intelligence', 
+                    code: 'CTE207', 
+                    instructor: 'Mr. Manoj ',
+                    icon: 'brain',
+                    iconClass: 'ai',
+                    credits: 3,
+                    duration: '50 hours',
+                    room: 'IT-304',
+                    schedule: 'Monday-Satuarday',
+                    semester: 'Spring 2025',
+                    department: 'Information Technology'
+                }
+            };
+            
+            const studentModuleData = {
+                '02230131': [ 
+                    { id: 1, attendance: 97.5, status: 'good', classes: { attended: 39, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 2, attendance: 95.0, status: 'good', classes: { attended: 38, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 3, attendance: 92.5, status: 'good', classes: { attended: 37, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 4, attendance: 97.5, status: 'good', classes: { attended: 39, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 5, attendance: 95.0, status: 'good', classes: { attended: 38, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 6, attendance: 90.0, status: 'good', classes: { attended: 36, total: 40, remaining: 10 }, requirement: 90 }
+                ],
+                '02230132': [ 
+                    { id: 1, attendance: 92.5, status: 'good', classes: { attended: 37, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 2, attendance: 87.5, status: 'warning', classes: { attended: 35, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 3, attendance: 90.0, status: 'good', classes: { attended: 36, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 4, attendance: 88.0, status: 'warning', classes: { attended: 35, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 5, attendance: 95.0, status: 'good', classes: { attended: 38, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 6, attendance: 92.5, status: 'good', classes: { attended: 37, total: 40, remaining: 10 }, requirement: 90 }
+                ],
+                '02230133': [ 
+                    { id: 1, attendance: 88.0, status: 'warning', classes: { attended: 35, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 2, attendance: 82.5, status: 'danger', classes: { attended: 33, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 3, attendance: 90.0, status: 'good', classes: { attended: 36, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 4, attendance: 95.0, status: 'good', classes: { attended: 38, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 5, attendance: 92.5, status: 'good', classes: { attended: 37, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 6, attendance: 87.5, status: 'warning', classes: { attended: 35, total: 40, remaining: 10 }, requirement: 90 }
+                ],
+                '02230134': [
+                    { id: 1, attendance: 90.0, status: 'good', classes: { attended: 36, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 2, attendance: 95.0, status: 'good', classes: { attended: 38, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 3, attendance: 85.0, status: 'danger', classes: { attended: 34, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 4, attendance: 87.5, status: 'warning', classes: { attended: 35, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 5, attendance: 82.5, status: 'danger', classes: { attended: 33, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 6, attendance: 90.0, status: 'good', classes: { attended: 36, total: 40, remaining: 10 }, requirement: 90 }
+                ],
+                '02230135': [ 
+                    { id: 1, attendance: 82.5, status: 'danger', classes: { attended: 33, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 2, attendance: 80.0, status: 'danger', classes: { attended: 32, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 3, attendance: 85.0, status: 'danger', classes: { attended: 34, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 4, attendance: 87.5, status: 'warning', classes: { attended: 35, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 5, attendance: 88.0, status: 'warning', classes: { attended: 35, total: 40, remaining: 10 }, requirement: 90 },
+                    { id: 6, attendance: 90.0, status: 'good', classes: { attended: 36, total: 40, remaining: 10 }, requirement: 90 }
+                ]
+            };
+            
+            const moduleInfo = moduleData[moduleId];
+            if (!moduleInfo) {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+            
+            const studentModules = studentModuleData[currentUser] || studentModuleData['02230131'];
+            const moduleAttendance = studentModules.find(m => m.id === moduleId);
+            
+            if (!moduleAttendance) {
+                window.location.href = 'dashboard.html';
+                return;
+            }
+            
+            document.getElementById('moduleTitle').textContent = moduleInfo.name;
+            document.getElementById('moduleCode').textContent = moduleInfo.code;
+            document.getElementById('moduleName').textContent = moduleInfo.name;
+            document.getElementById('moduleInstructor').textContent = moduleInfo.instructor;
+            
+            document.getElementById('moduleIcon').className = `module-icon ${moduleInfo.iconClass}`;
+            document.getElementById('moduleIcon').innerHTML = `<i class="fas fa-${moduleInfo.icon}"></i>`;
+            
+            document.getElementById('attendancePercent').textContent = `${moduleAttendance.attendance}%`;
+            document.getElementById('attendanceRequirement').textContent = `${moduleAttendance.requirement}%`;
+            
+            const progressBar = document.getElementById('attendanceProgress');
+            progressBar.style.width = `${moduleAttendance.attendance}%`;
+            
+            if (moduleAttendance.status === 'good') {
+                progressBar.className = 'progress-bar progress-good';
+                document.getElementById('moduleStatus').className = 'attendance-status status-good';
+                document.getElementById('moduleStatus').textContent = 'Good';
+            } else if (moduleAttendance.status === 'warning') {
+                progressBar.className = 'progress-bar progress-warning';
+                document.getElementById('moduleStatus').className = 'attendance-status status-warning';
+                document.getElementById('moduleStatus').textContent = 'Warning';
+            } else {
+                progressBar.className = 'progress-bar progress-danger';
+                document.getElementById('moduleStatus').className = 'attendance-status status-danger';
+                document.getElementById('moduleStatus').textContent = 'Critical';
+            }
+            
+            document.getElementById('attendedClasses').textContent = `${moduleAttendance.classes.attended}/${moduleAttendance.classes.total}`;
+            document.getElementById('missedClasses').textContent = moduleAttendance.classes.total - moduleAttendance.classes.attended;
+            document.getElementById('remainingClasses').textContent = moduleAttendance.classes.remaining;
+            
+            const totalClasses = moduleAttendance.classes.total + moduleAttendance.classes.remaining;
+            const minRequired = Math.ceil(totalClasses * (moduleAttendance.requirement / 100));
+            const canMiss = Math.max(0, moduleAttendance.classes.attended + moduleAttendance.classes.remaining - minRequired);
+            document.getElementById('canMissClasses').textContent = canMiss;
+            
+            document.getElementById('moduleCredits').textContent = moduleInfo.credits;
+            document.getElementById('moduleDuration').textContent = moduleInfo.duration;
+            document.getElementById('moduleRoom').textContent = moduleInfo.room;
+            document.getElementById('moduleSchedule').textContent = moduleInfo.schedule;
+            document.getElementById('moduleSemester').textContent = moduleInfo.semester;
+            document.getElementById('moduleDepartment').textContent = moduleInfo.department;
+            
+            const ctx = document.getElementById('attendanceChart').getContext('2d');
+            
+            const weeks = ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10'];
+            const attendanceData = [100, 100, 100, 50, 100, 100, 100, 100, 100, 100];
+            
+            const chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: weeks,
+                    datasets: [{
+                        label: 'Weekly Attendance (%)',
+                        data: attendanceData,
+                        backgroundColor: 'rgba(65, 84, 241, 0.1)',
+                        borderColor: 'rgba(65, 84, 241, 1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + '%';
+                                }
+                            }
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

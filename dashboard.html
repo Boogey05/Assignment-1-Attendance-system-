@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - College Attendance System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4154f1;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .navbar-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .content-area {
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        
+        .nav-menu .nav-link {
+            color: var(--primary-color);
+            padding: 10px 15px;
+            transition: all 0.3s;
+            border-radius: 5px;
+        }
+        
+        .nav-menu .nav-link:hover, 
+        .nav-menu .nav-link.active {
+            background-color: rgba(65, 84, 241, 0.1);
+        }
+        
+        .nav-menu .nav-link i {
+            margin-right: 10px;
+        }
+        
+        .dashboard-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .attendance-summary {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .summary-card {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin: 0 10px;
+            text-align: center;
+        }
+        
+        .summary-card:first-child {
+            margin-left: 0;
+        }
+        
+        .summary-card:last-child {
+            margin-right: 0;
+        }
+        
+        .summary-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .summary-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .good-value {
+            color: var(--success-color);
+        }
+        
+        .warning-value {
+            color: var(--warning-color);
+        }
+        
+        .danger-value {
+            color: var(--danger-color);
+        }
+        
+        .module-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .module-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .module-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .module-card .module-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .module-card .module-code {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .attendance-percent {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .progress-good {
+            background-color: var(--success-color);
+        }
+        
+        .progress-warning {
+            background-color: var(--warning-color);
+        }
+        
+        .progress-danger {
+            background-color: var(--danger-color);
+        }
+        
+        .attendance-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-good {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+        }
+        
+        .status-warning {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+        }
+        
+        .status-danger {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .attendance-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        
+        .detail-item {
+            text-align: center;
+        }
+        
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .detail-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .upcoming-classes {
+            margin-top: 30px;
+        }
+        
+        .class-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .class-item:last-child {
+            border-bottom: none;
+        }
+        
+        .class-time {
+            width: 100px;
+            font-weight: 600;
+        }
+        
+        .class-info {
+            flex: 1;
+        }
+        
+        .class-module {
+            font-weight: 600;
+        }
+        
+        .class-location {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .module-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .attendance-summary {
+                flex-direction: column;
+            }
+            
+            .summary-card {
+                margin: 10px 0;
+            }
+        }
+        
+        .footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem 0;
+            margin-top: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="d-flex align-items-center">
+            <img src="logo.png" alt="College Logo" class="rounded-circle me-2">
+            <a href="dashboard.html" class="navbar-logo">College Attendance System</a>
+        </div>
+        <div class="user-info">
+            <img src="Me.jpeg" alt="Student Avatar">
+            <div>
+                <h6 id="studentNameHeader" class="mb-0">Student Name</h6>
+                <small id="studentIdHeader" class="text-muted">Student ID</small>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="nav-menu">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link active">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="timetable.html" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i> My Timetable
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="profile.html" class="nav-link">
+                        <i class="fas fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="nav-item ms-auto">
+                    <a href="#" class="nav-link" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="content-area">            
+            <div class="dashboard-card">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h4>Welcome, <span id="welcomeStudentName">Student</span>!</h4>
+                        <p class="text-muted">Information Technology Department</p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <h6>Current Semester: <span class="text-primary">Spring 2025</span></h6>
+                        <div class="alert alert-info mt-3" role="alert">
+                            <i class="fas fa-info-circle me-2"></i> You must maintain at least <strong>90%</strong> attendance in <strong>each module</strong> to be eligible for final examinations.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="attendance-summary">
+                <div class="summary-card">
+                    <div class="summary-label">Average Attendance</div>
+                    <div class="summary-value" id="averageAttendance">91.1%</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Modules Above 90%</div>
+                    <div class="summary-value good-value" id="goodModules">4</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Modules At Risk</div>
+                    <div class="summary-value warning-value" id="warningModules">1</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Critical Modules</div>
+                    <div class="summary-value danger-value" id="criticalModules">1</div>
+                </div>
+            </div>
+            
+            <h4 class="mb-3">My Module Attendance</h4>
+            <div class="module-cards" id="moduleCards">
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 College Attendance System. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const studentNames = {
+                '02230131': 'Kinley',
+                '02230132': 'Chimi',
+                '02230133': 'Dorji',
+                '02230134': 'Karma',
+                '02230135': 'Passang'
+            };
+            
+            const studentName = studentNames[currentUser] || 'Student';
+            document.getElementById('studentNameHeader').textContent = studentName;
+            document.getElementById('welcomeStudentName').textContent = studentName;
+            document.getElementById('studentIdHeader').textContent = currentUser;
+            
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            });
+
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const linkHref = link.getAttribute('href');
+                if (linkHref === currentPage) {
+                    link.classList.add('active');
+                } else if (currentPage === '' && linkHref === 'dashboard.html') {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            
+            const studentModuleData = {
+                '02230131': [ 
+                    { 
+                        id: 1, 
+                        name: 'Web Application Development', 
+                        code: 'CTE204', 
+                        attendance: 97.5, 
+                        status: 'good', 
+                        link: 'module-details.html?id=1',
+                        classes: { attended: 39, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 2, 
+                        name: 'Introduction to IoT', 
+                        code: 'NWC202', 
+                        attendance: 95.0, 
+                        status: 'good', 
+                        link: 'module-details.html?id=2',
+                        classes: { attended: 38, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 3, 
+                        name: 'Software Engineering', 
+                        code: 'CTE206', 
+                        attendance: 92.5, 
+                        status: 'good', 
+                        link: 'module-details.html?id=3',
+                        classes: { attended: 37, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 4, 
+                        name: 'Operating Systems', 
+                        code: 'CTE205', 
+                        attendance: 97.5, 
+                        status: 'good', 
+                        link: 'module-details.html?id=4',
+                        classes: { attended: 39, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 5, 
+                        name: 'Computational Mathematics', 
+                        code: 'MAT206', 
+                        attendance: 95.0, 
+                        status: 'good', 
+                        link: 'module-details.html?id=5',
+                        classes: { attended: 38, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 6, 
+                        name: 'Artificial Intelligence', 
+                        code: 'CTE207', 
+                        attendance: 90.0, 
+                        status: 'good', 
+                        link: 'module-details.html?id=6',
+                        classes: { attended: 36, total: 40, remaining: 10 },
+                        requirement: 90
+                    }
+                ],
+                '02230132': [ 
+                    { 
+                        id: 1, 
+                        name: 'Web Application Development', 
+                        code: 'CTE204', 
+                        attendance: 92.5, 
+                        status: 'good', 
+                        link: 'module-details.html?id=1',
+                        classes: { attended: 37, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 2, 
+                        name: 'Introduction to IoT', 
+                        code: 'NWC202', 
+                        attendance: 87.5, 
+                        status: 'warning', 
+                        link: 'module-details.html?id=2',
+                        classes: { attended: 35, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 3, 
+                        name: 'Software Engineering', 
+                        code: 'CTE206', 
+                        attendance: 90.0, 
+                        status: 'good', 
+                        link: 'module-details.html?id=3',
+                        classes: { attended: 36, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 4, 
+                        name: 'Operating Systems', 
+                        code: 'CTE205', 
+                        attendance: 88.0, 
+                        status: 'warning', 
+                        link: 'module-details.html?id=4',
+                        classes: { attended: 35, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 5, 
+                        name: 'Computational Mathematics', 
+                        code: 'MAT206', 
+                        attendance: 95.0, 
+                        status: 'good', 
+                        link: 'module-details.html?id=5',
+                        classes: { attended: 38, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 6, 
+                        name: 'Artificial Intelligence', 
+                        code: 'CTE207', 
+                        attendance: 92.5, 
+                        status: 'good', 
+                        link: 'module-details.html?id=6',
+                        classes: { attended: 37, total: 40, remaining: 10 },
+                        requirement: 90
+                    }
+                ],
+                '02230133': [ 
+                    { 
+                        id: 1, 
+                        name: 'Web Application Development', 
+                        code: 'CTE204', 
+                        attendance: 88.0, 
+                        status: 'warning', 
+                        link: 'module-details.html?id=1',
+                        classes: { attended: 35, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 2, 
+                        name: 'Introduction to IoT', 
+                        code: 'NWC202', 
+                        attendance: 82.5, 
+                        status: 'danger', 
+                        link: 'module-details.html?id=2',
+                        classes: { attended: 33, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 3, 
+                        name: 'Software Engineering', 
+                        code: 'CTE206', 
+                        attendance: 90.0, 
+                        status: 'good', 
+                        link: 'module-details.html?id=3',
+                        classes: { attended: 36, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 4, 
+                        name: 'Operating Systems', 
+                        code: 'CTE205', 
+                        attendance: 95.0, 
+                        status: 'good', 
+                        link: 'module-details.html?id=4',
+                        classes: { attended: 38, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 5, 
+                        name: 'Computational Mathematics', 
+                        code: 'MAT206', 
+                        attendance: 92.5, 
+                        status: 'good', 
+                        link: 'module-details.html?id=5',
+                        classes: { attended: 37, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 6, 
+                        name: 'Artificial Intelligence', 
+                        code: 'CTE207', 
+                        attendance: 87.5, 
+                        status: 'warning', 
+                        link: 'module-details.html?id=6',
+                        classes: { attended: 35, total: 40, remaining: 10 },
+                        requirement: 90
+                    }
+                ],
+                '02230134': [
+                    { 
+                        id: 1, 
+                        name: 'Web Application Development', 
+                        code: 'CTE204', 
+                        attendance: 90.0, 
+                        status: 'good', 
+                        link: 'module-details.html?id=1',
+                        classes: { attended: 36, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 2, 
+                        name: 'Introduction to IoT', 
+                        code: 'NWC202', 
+                        attendance: 95.0, 
+                        status: 'good', 
+                        link: 'module-details.html?id=2',
+                        classes: { attended: 38, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 3, 
+                        name: 'Software Engineering', 
+                        code: 'CTE206', 
+                        attendance: 85.0, 
+                        status: 'danger', 
+                        link: 'module-details.html?id=3',
+                        classes: { attended: 34, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 4, 
+                        name: 'Operating Systems', 
+                        code: 'CTE205', 
+                        attendance: 87.5, 
+                        status: 'warning', 
+                        link: 'module-details.html?id=4',
+                        classes: { attended: 35, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 5, 
+                        name: 'Computational Mathematics', 
+                        code: 'MAT206', 
+                        attendance: 82.5, 
+                        status: 'danger', 
+                        link: 'module-details.html?id=5',
+                        classes: { attended: 33, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 6, 
+                        name: 'Artificial Intelligence', 
+                        code: 'CTE207', 
+                        attendance: 90.0, 
+                        status: 'good', 
+                        link: 'module-details.html?id=6',
+                        classes: { attended: 36, total: 40, remaining: 10 },
+                        requirement: 90
+                    }
+                ],
+                '02230135': [ 
+                    { 
+                        id: 1, 
+                        name: 'Web Application Development', 
+                        code: 'CTE204', 
+                        attendance: 82.5, 
+                        status: 'danger', 
+                        link: 'module-details.html?id=1',
+                        classes: { attended: 33, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 2, 
+                        name: 'Introduction to IoT', 
+                        code: 'NWC202', 
+                        attendance: 80.0, 
+                        status: 'danger', 
+                        link: 'module-details.html?id=2',
+                        classes: { attended: 32, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 3, 
+                        name: 'Software Engineering', 
+                        code: 'CTE206', 
+                        attendance: 85.0, 
+                        status: 'danger', 
+                        link: 'module-details.html?id=3',
+                        classes: { attended: 34, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 4, 
+                        name: 'Operating Systems', 
+                        code: 'CTE205', 
+                        attendance: 87.5, 
+                        status: 'warning', 
+                        link: 'module-details.html?id=4',
+                        classes: { attended: 35, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 5, 
+                        name: 'Computational Mathematics', 
+                        code: 'MAT206', 
+                        attendance: 88.0, 
+                        status: 'warning', 
+                        link: 'module-details.html?id=5',
+                        classes: { attended: 35, total: 40, remaining: 10 },
+                        requirement: 90
+                    },
+                    { 
+                        id: 6, 
+                        name: 'Artificial Intelligence', 
+                        code: 'CTE207', 
+                        attendance: 90.0, 
+                        status: 'good', 
+                        link: 'module-details.html?id=6',
+                        classes: { attended: 36, total: 40, remaining: 10 },
+                        requirement: 90
+                    }
+                ]
+            };
+            
+            const moduleData = studentModuleData[currentUser] || studentModuleData['02230131'];
+            
+            let totalAttendance = 0;
+            let goodModules = 0;
+            let warningModules = 0;
+            let criticalModules = 0;
+            
+            moduleData.forEach(module => {
+                totalAttendance += module.attendance;
+                
+                if (module.attendance >= 90) {
+                    goodModules++;
+                } else if (module.attendance >= 87) {
+                    warningModules++;
+                } else {
+                    criticalModules++;
+                }
+            });
+            
+            const averageAttendance = (totalAttendance / moduleData.length).toFixed(1);
+            document.getElementById('averageAttendance').textContent = averageAttendance + '%';
+            document.getElementById('goodModules').textContent = goodModules;
+            document.getElementById('warningModules').textContent = warningModules;
+            document.getElementById('criticalModules').textContent = criticalModules;
+            
+            const moduleCardsContainer = document.getElementById('moduleCards');
+            moduleCardsContainer.innerHTML = ''; // Clear existing cards
+            
+            moduleData.forEach(module => {
+                const statusClass = module.status === 'good' ? 'progress-good' : 
+                                    module.status === 'warning' ? 'progress-warning' : 'progress-danger';
+                
+                const statusBadgeClass = module.status === 'good' ? 'status-good' : 
+                                    module.status === 'warning' ? 'status-warning' : 'status-danger';
+                
+                const statusText = module.status === 'good' ? 'Good' : 
+                                module.status === 'warning' ? 'Warning' : 'Critical';
+                
+                const totalClasses = module.classes.attended + module.classes.remaining;
+                const minRequired = Math.ceil(totalClasses * (module.requirement / 100));
+                const canMiss = Math.max(0, module.classes.attended + module.classes.remaining - minRequired);
+                
+                const moduleCard = document.createElement('div');
+                moduleCard.className = 'module-card';
+                moduleCard.innerHTML = `
+                    <div class="module-title">${module.name}</div>
+                    <div class="module-code">${module.code}</div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="attendance-percent">${module.attendance}%</div>
+                        <span class="attendance-status ${statusBadgeClass}">${statusText}</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar ${statusClass}" role="progressbar" style="width: ${module.attendance}%" 
+                            aria-valuenow="${module.attendance}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <div class="attendance-details">
+                        <div class="detail-item">
+                            <div class="detail-value">${module.classes.attended}/${module.classes.total}</div>
+                            <div class="detail-label">Attended</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-value">${module.classes.remaining}</div>
+                            <div class="detail-label">Remaining</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-value">${canMiss}</div>
+                            <div class="detail-label">Can Miss</div>
+                        </div>
+                    </div>
+                    <div class="text-end mt-3">
+                        <a href="${module.link}" class="btn btn-sm btn-primary">View Details</a>
+                    </div>
+                `;
+                moduleCardsContainer.appendChild(moduleCard);
+            });
+            
+            const today = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = today.toLocaleDateString('en-US', options);
+            
+            function updateCurrentTime() {
+                const now = new Date();
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const currentTime = `${hours}:${minutes}`;
+                
+                const classItems = document.querySelectorAll('.class-item');
+                classItems.forEach(item => {
+                    const timeElement = item.querySelector('.class-time');
+                    const timeText = timeElement.textContent;
+                    const badge = item.querySelector('.badge');
+                    
+                    let classTime = timeText;
+                    if (timeText.includes('AM')) {
+                        classTime = timeText.replace(' AM', '');
+                        if (classTime.startsWith('12')) {
+                            classTime = '00' + classTime.substring(2);
+                        }
+                    } else if (timeText.includes('PM')) {
+                        classTime = timeText.replace(' PM', '');
+                        if (!classTime.startsWith('12')) {
+                            const hourPart = parseInt(classTime.split(':')[0]) + 12;
+                            classTime = hourPart + classTime.substring(classTime.indexOf(':'));
+                        }
+                    }
+                    
+                    classTime = classTime.replace(':', '');
+                    const currentTimeFormatted = hours + minutes;
+                    
+                    if (parseInt(currentTimeFormatted) > parseInt(classTime)) {
+                        badge.className = 'badge bg-success';
+                        badge.textContent = 'Attended';
+                    } else if (parseInt(currentTimeFormatted) + 100 > parseInt(classTime)) {
+                        badge.className = 'badge bg-primary';
+                        badge.textContent = 'Current';
+                    } else {
+                        badge.className = 'badge bg-warning';
+                        badge.textContent = 'Upcoming';
+                    }
+                });
+            }
+            
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 60000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profile - College Attendance System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4154f1;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .navbar-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .content-area {
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        
+        .nav-menu .nav-link {
+            color: var(--primary-color);
+            padding: 10px 15px;
+            transition: all 0.3s;
+            border-radius: 5px;
+        }
+        
+        .nav-menu .nav-link:hover, 
+        .nav-menu .nav-link.active {
+            background-color: rgba(65, 84, 241, 0.1);
+        }
+        
+        .nav-menu .nav-link i {
+            margin-right: 10px;
+        }
+        
+        .profile-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #f0f0f0;
+            margin-right: 30px;
+        }
+        
+        .profile-info h3 {
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .profile-info .student-id {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .profile-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+        
+        .status-good {
+            background-color: rgba(46, 204, 113, 0.1);
+            color: var(--success-color);
+        }
+        
+        .status-warning {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+        }
+        
+        .status-danger {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+        
+        .profile-details {
+            margin-top: 20px;
+        }
+        
+        .detail-row {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            width: 30%;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .detail-value {
+            width: 70%;
+            color: #333;
+        }
+        
+        .profile-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary:hover {
+            background-color: #3445c2;
+            border-color: #3445c2;
+        }
+        
+        .footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem 0;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .attendance-summary {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        
+        .summary-card {
+            flex: 1;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin: 0 10px;
+            text-align: center;
+        }
+        
+        .summary-card:first-child {
+            margin-left: 0;
+        }
+        
+        .summary-card:last-child {
+            margin-right: 0;
+        }
+        
+        .summary-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .summary-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .good-value {
+            color: var(--success-color);
+        }
+        
+        .warning-value {
+            color: var(--warning-color);
+        }
+        
+        .danger-value {
+            color: var(--danger-color);
+        }
+        
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-image {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+            }
+            
+            .detail-label,
+            .detail-value {
+                width: 100%;
+            }
+            
+            .detail-label {
+                margin-bottom: 5px;
+            }
+            
+            .attendance-summary {
+                flex-direction: column;
+            }
+            
+            .summary-card {
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="d-flex align-items-center">
+            <img src="logo.png" alt="College Logo" class="rounded-circle me-2">
+            <a href="dashboard.html" class="navbar-logo">College Attendance System</a>
+        </div>
+        <div class="user-info">
+            <img id="headerProfilePic" src="Me.jpeg" alt="Student Avatar">
+            <div>
+                <h6 id="studentNameHeader" class="mb-0">Student Name</h6>
+                <small id="studentIdHeader" class="text-muted">Student ID</small>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="nav-menu">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="timetable.html" class="nav-link">
+                        <i class="fas fa-calendar-alt"></i> My Timetable
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="profile.html" class="nav-link active">
+                        <i class="fas fa-user"></i> My Profile
+                    </a>
+                </li>
+                <li class="nav-item ms-auto">
+                    <a href="#" class="nav-link" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="content-area">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <img id="profileImage" src="/api/placeholder/150/150" alt="Student Profile Picture" class="profile-image">
+                    <div class="profile-info">
+                        <h3 id="studentName">Student Name</h3>
+                        <div class="student-id" id="studentId">Student ID</div>
+                        <div class="mb-2">Information Technology Department</div>
+                        <div class="profile-status" id="attendanceStatus">Status</div>
+                    </div>
+                </div>
+                
+                <div class="profile-details">
+                    <div class="detail-row">
+                        <div class="detail-label">Email</div>
+                        <div class="detail-value" id="studentEmail">student@example.com</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Phone</div>
+                        <div class="detail-value" id="studentPhone">+975 17123456</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Date of Birth</div>
+                        <div class="detail-value" id="studentDob">January 1, 2000</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Program</div>
+                        <div class="detail-value">Bachelor of Science in Information Technology</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Enrollment Year</div>
+                        <div class="detail-value">2023</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Current Semester</div>
+                        <div class="detail-value">Spring 2025</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Address</div>
+                        <div class="detail-value" id="studentAddress">Thimphu, Bhutan</div>
+                    </div>
+                </div>
+                
+                <div class="profile-actions">
+                    <button class="btn btn-primary" id="editProfileBtn">
+                        <i class="fas fa-edit me-2"></i> Edit Profile
+                    </button>
+                    <button class="btn btn-outline-primary" id="changePasswordBtn">
+                        <i class="fas fa-key me-2"></i> Change Password
+                    </button>
+                </div>
+            </div>
+            
+            <h4 class="mb-3">Attendance Overview</h4>
+            <div class="attendance-summary">
+                <div class="summary-card">
+                    <div class="summary-label">Average Attendance</div>
+                    <div class="summary-value" id="averageAttendance">91.1%</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Modules Above 90%</div>
+                    <div class="summary-value good-value" id="goodModules">4</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Modules At Risk</div>
+                    <div class="summary-value warning-value" id="warningModules">1</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Critical Modules</div>
+                    <div class="summary-value danger-value" id="criticalModules">1</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 College Attendance System. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const studentProfiles = {
+                '02230131': { 
+                    name: 'Kinley Wangchuk',
+                    email: 'kinley.wangchuk@example.com',
+                    phone: '+975 17123456',
+                    dob: 'March 15, 2002',
+                    address: 'Thimphu, Bhutan',
+                    image: '1.jpeg',
+                    status: 'Good Standing',
+                    statusClass: 'status-good',
+                    averageAttendance: '94.5%',
+                    goodModules: 6,
+                    warningModules: 0,
+                    criticalModules: 0,
+                    prevGPA: '3.80',
+                    cumulativeGPA: '3.85',
+                    scholarships: 'Merit Scholarship'
+                },
+                '02230132': { 
+                    name: 'Chimi Dema',
+                    email: 'chimi.dema@example.com',
+                    phone: '+975 17789012',
+                    dob: 'May 22, 2001',
+                    address: 'Paro, Bhutan',
+                    image: '2.jpeg',
+                    status: 'Warning',
+                    statusClass: 'status-warning',
+                    averageAttendance: '90.8%',
+                    goodModules: 4,
+                    warningModules: 2,
+                    criticalModules: 0,
+                    prevGPA: '3.65',
+                    cumulativeGPA: '3.70',
+                    scholarships: 'Women in Technology Scholarship'
+                },
+                '02230133': { 
+                    name: 'Dorji Tshering',
+                    email: 'dorji.tshering@example.com',
+                    phone: '+975 17234567',
+                    dob: 'October 10, 2002',
+                    address: 'Punakha, Bhutan',
+                    image: '3.jpeg',
+                    status: 'At Risk',
+                    statusClass: 'status-danger',
+                    averageAttendance: '89.2%',
+                    goodModules: 3,
+                    warningModules: 2,
+                    criticalModules: 1,
+                    prevGPA: '3.45',
+                    cumulativeGPA: '3.50',
+                    scholarships: 'None'
+                },
+                '02230134': { 
+                    name: 'Karma Tenzin',
+                    email: 'karma.tenzin@example.com',
+                    phone: '+975 17456789',
+                    dob: 'July 5, 2001',
+                    address: 'Wangdue, Bhutan',
+                    image: '4.jpeg',
+                    status: 'Critical',
+                    statusClass: 'status-danger',
+                    averageAttendance: '88.3%',
+                    goodModules: 3,
+                    warningModules: 1,
+                    criticalModules: 2,
+                    prevGPA: '3.25',
+                    cumulativeGPA: '3.30',
+                    scholarships: 'None'
+                },
+                '02230135': { 
+                    name: 'Passang Lhamo',
+                    email: 'passang.lhamo@example.com',
+                    phone: '+975 17345678',
+                    dob: 'December 18, 2002',
+                    address: 'Bumthang, Bhutan',
+                    image: '5.jpeg',
+                    status: 'Critical',
+                    statusClass: 'status-danger',
+                    averageAttendance: '85.5%',
+                    goodModules: 1,
+                    warningModules: 2,
+                    criticalModules: 3,
+                    prevGPA: '3.10',
+                    cumulativeGPA: '3.20',
+                    scholarships: 'Rural Student Scholarship'
+                }
+            };
+            
+            const profile = studentProfiles[currentUser] || studentProfiles['02230131'];
+            
+            document.getElementById('studentNameHeader').textContent = profile.name;
+            document.getElementById('studentIdHeader').textContent = currentUser;
+            document.getElementById('headerProfilePic').src = profile.image;
+            
+            document.getElementById('studentName').textContent = profile.name;
+            document.getElementById('studentId').textContent = currentUser;
+            document.getElementById('studentEmail').textContent = profile.email;
+            document.getElementById('studentPhone').textContent = profile.phone;
+            document.getElementById('studentDob').textContent = profile.dob;
+            document.getElementById('studentAddress').textContent = profile.address;
+            document.getElementById('profileImage').src = profile.image;
+            
+            const attendanceStatus = document.getElementById('attendanceStatus');
+            attendanceStatus.textContent = profile.status;
+            attendanceStatus.className = `profile-status ${profile.statusClass}`;
+            
+            document.getElementById('averageAttendance').textContent = profile.averageAttendance;
+            document.getElementById('goodModules').textContent = profile.goodModules;
+            document.getElementById('warningModules').textContent = profile.warningModules;
+            document.getElementById('criticalModules').textContent = profile.criticalModules;
+            
+            document.getElementById('prevGPA').textContent = profile.prevGPA;
+            document.getElementById('cumulativeGPA').textContent = profile.cumulativeGPA;
+            document.getElementById('scholarships').textContent = profile.scholarships;
+            
+            document.getElementById('editProfileBtn').addEventListener('click', function() {
+                alert('Edit Profile feature will be implemented in a future update.');
+            });
+            
+            document.getElementById('changePasswordBtn').addEventListener('click', function() {
+                alert('Change Password feature will be implemented in a future update.');
+            });
+            
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            });
+        });
+    </script>
+</body>
+</html>

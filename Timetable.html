@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timetable - College Attendance System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4154f1;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .navbar-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        .content-area {
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .nav-menu {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+        
+        .nav-menu .nav-link {
+            color: var(--primary-color);
+            padding: 10px 15px;
+            transition: all 0.3s;
+            border-radius: 5px;
+        }
+        
+        .nav-menu .nav-link:hover, 
+        .nav-menu .nav-link.active {
+            background-color: rgba(65, 84, 241, 0.1);
+        }
+        
+        .nav-menu .nav-link i {
+            margin-right: 10px;
+        }
+        
+        .dashboard-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            color: #333;
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .timetable {
+            overflow-x: auto;
+        }
+        
+        .timetable table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .timetable th, .timetable td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        
+        .timetable th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        
+        .timetable .day-col {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            position: sticky;
+            left: 0;
+            z-index: 2;
+        }
+        
+        .time-slot {
+            background-color: #00aeef;
+            color: white;
+            font-weight: 600;
+        }
+        
+        .class-slot {
+            background-color: #ffffff;
+            border-radius: 4px;
+        }
+        
+        .class-code {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+        
+        .class-type {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .group-info {
+            font-size: 0.75rem;
+            margin-top: 3px;
+            color: #495057;
+        }
+        
+        .break-col {
+            background-color: #00aeef;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            vertical-align: middle;
+            text-orientation: mixed;
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            height: 100%;
+        }
+        
+        .lunch-col {
+            background-color: #00aeef;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            vertical-align: middle;
+            text-orientation: mixed;
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            height: 100%;
+        }
+        
+        .empty-slot {
+            background-color: #f8f9fa;
+        }
+        
+        .weekend {
+            background-color: #e9ecef;
+        }
+        
+        @media (max-width: 768px) {
+            .timetable {
+                font-size: 0.8rem;
+            }
+            
+            .timetable th, .timetable td {
+                padding: 5px;
+            }
+        }
+        
+        .footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem 0;
+            margin-top: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="d-flex align-items-center">
+            <img src="logo.png" alt="College Logo" class="rounded-circle me-2" width="40" height="40">
+            <a href="dashboard.html" class="navbar-logo">College Attendance System</a>
+        </div>
+        <div class="user-info">
+            <img src="Me.jpeg" alt="Student Avatar">
+            <div>
+                <h6 id="studentNameHeader" class="mb-0">Student Name</h6>
+                <small id="studentIdHeader" class="text-muted">Student ID</small>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="nav-menu">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="timetable.html" class="nav-link active">
+                        <i class="fas fa-calendar-alt"></i> Timetable
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="profile.html" class="nav-link">
+                        <i class="fas fa-user"></i> Profile
+                    </a>
+                </li>
+                <li class="nav-item ms-auto">
+                    <a href="#" class="nav-link" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="content-area">
+            <div class="dashboard-card">
+                <h4 class="card-title">Class Timetable <span class="text-primary">Spring 2025</span></h4>
+                <div class="alert alert-info" role="alert">
+                    <i class="fas fa-info-circle me-2"></i> (L) indicates Lecture sessions, (P) indicates Practical/Lab sessions, and the Group designations (A/B) indicate your assigned section.
+                </div>
+                <div class="timetable">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="time-slot">8-9 AM</th>
+                                <th class="time-slot">9-10 AM</th>
+                                <th class="time-slot">10-10:15 AM</th>
+                                <th class="time-slot">10:15-11:15 AM</th>
+                                <th class="time-slot">11:15-12:15 PM</th>
+                                <th class="time-slot">12:15-1:15 PM</th>
+                                <th class="time-slot">1:15-2:15 PM</th>
+                                <th class="time-slot">2:15-3:15 PM</th>
+                                <th class="time-slot">3:15-4:15 PM</th>
+                                <th class="time-slot">4:15-5:15 PM</th>
+                                <th class="time-slot">5:15-6:15 PM</th>
+                                <th class="time-slot">6:15-7:15 PM</th>
+                                <th class="time-slot">7:15-8:15 PM</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="day-col">Monday</td>
+                                <td></td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE204(L)</div>
+                                    </div>
+                                </td>
+                                <td class="break-col" rowspan="5">Break</td>
+                                <td colspan="2" class="empty-slot"></td>
+                                <td class="lunch-col" rowspan="5">Lunch</td>
+                                <td colspan="2">
+                                    <div class="class-slot">
+                                        <div class="class-code">NWC202(P)</div>
+                                        <div class="group-info">Grp-A</div>
+                                    </div>
+                                </td>
+                                <td colspan="4" class="empty-slot"></td>
+                            </tr>
+                            <tr>
+                                <td class="day-col">Tuesday</td>
+                                <td></td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE206(L)</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">MAT206(L)</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">MAT206(L)</div>
+                                    </div>
+                                </td>
+                                <td colspan="2">
+                                    <div class="class-slot">
+                                        <div class="class-code">NWC202(P)</div>
+                                        <div class="group-info">Grp-B</div>
+                                    </div>
+                                </td>
+                                <td colspan="4" class="empty-slot"></td>
+                            </tr>
+                            <tr>
+                                <td class="day-col">Wednesday</td>
+                                <td></td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">NWC202(L)</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE204(L)</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE204(L)</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">MAT206(P)</div>
+                                        <div class="group-info">Grp-A</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE204(P)</div>
+                                        <div class="group-info">Grp-B</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">MAT206(P)</div>
+                                        <div class="group-info">Grp-B</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE204(P)</div>
+                                        <div class="group-info">Grp-A</div>
+                                    </div>
+                                </td>
+                                <td colspan="4" class="empty-slot"></td>
+                            </tr>
+                            <tr>
+                                <td class="day-col">Thursday</td>
+                                <td></td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE207(L)</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">NWC202(L)</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">NWC202(L)</div>
+                                    </div>
+                                </td>
+                                <td colspan="3" class="empty-slot"></td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE205(L)</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE205(L)</div>
+                                    </div>
+                                </td>
+                                <td colspan="3" class="empty-slot"></td>
+                            </tr>
+                            <tr>
+                                <td class="day-col">Friday</td>
+                                <td></td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">MAT206(L)</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE207(L)</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE207(L)</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE206(L)</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE206(L)</div>
+                                    </div>
+                                </td>
+                                <td></td>
+                                <td>
+                                    <div class="class-slot">
+                                        <div class="class-code">CTE205(L)</div>
+                                    </div>
+                                </td>
+                                <td colspan="4" class="empty-slot"></td>
+                            </tr>
+                            <tr>
+                                <td class="day-col">Saturday</td>
+                                <td colspan="13" class="weekend">Weekend</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 College Attendance System. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            if (!currentUser) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const studentNames = {
+                '02230131': 'Kinley',
+                '02230132': 'Chimi',
+                '02230133': 'Dorji',
+                '02230134': 'Karma',
+                '02230135': 'Passang'
+            };
+            
+            const studentName = studentNames[currentUser] || 'Student';
+            document.getElementById('studentNameHeader').textContent = studentName;
+            document.getElementById('studentIdHeader').textContent = currentUser;
+            
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            });
+            
+            // Set the active menu item based on the current page
+            const currentPage = window.location.pathname.split('/').pop();
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const linkHref = link.getAttribute('href');
+                if (linkHref === currentPage) {
+                    link.classList.add('active');
+                } else if (currentPage === '' && linkHref === 'dashboard.html') {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

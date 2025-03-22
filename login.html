@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login - College Attendance System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            height: 100vh;
+        }
+        
+        .navbar-custom {
+            background-color: var(--secondary-color);
+        }
+        
+        .login-container {
+            min-height: calc(100vh - 176px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-card {
+            max-width: 400px;
+            width: 100%;
+            padding: 2rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            border-radius: 0.5rem;
+            background-color: white;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .btn-login {
+            background-color: var(--primary-color);
+            border: none;
+            width: 100%;
+            padding: 0.75rem;
+        }
+        
+        .btn-login:hover {
+            background-color: #2980b9;
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        
+        .footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem 0;
+        }
+        
+        .student-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <img src="/api/placeholder/40/40" alt="College Logo" class="rounded-circle me-2">
+                <a class="navbar-brand" href="#">Student Attendance System</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Student Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Help</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <i class="fas fa-user-graduate student-icon"></i>
+                <h3>Student Login</h3>
+                <p class="text-muted">Access your attendance records</p>
+            </div>
+            
+            <form id="studentLoginForm">
+                <div class="mb-3">
+                    <label for="studentId" class="form-label">Student ID</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                        <input type="text" class="form-control" id="studentId" placeholder="Enter your student ID" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="studentPassword" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input type="password" class="form-control" id="studentPassword" placeholder="Enter your password" required>
+                    </div>
+                </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="studentRememberMe">
+                    <label class="form-check-label" for="studentRememberMe">Remember me</label>
+                </div>
+                <button type="submit" class="btn btn-login btn-primary">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <a href="#" class="text-decoration-none">Forgot Password?</a>
+                <p class="mt-3 mb-0 text-muted">For technical support, contact your student services department</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2025 Student Attendance System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('studentLoginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const studentId = document.getElementById('studentId').value;
+            const password = document.getElementById('studentPassword').value;
+            
+            const validStudentCredentials = [
+                { id: "02230131", password: "password1" },
+                { id: "02230132", password: "password2" },
+                { id: "02230133", password: "password3" },
+                { id: "02230134", password: "password4" },
+                { id: "02230135", password: "password5" }
+            ];
+            
+            const student = validStudentCredentials.find(cred => cred.id === studentId && cred.password === password);
+            
+            if (student) {
+                sessionStorage.setItem('currentUser', studentId);
+                sessionStorage.setItem('userRole', 'student');
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('Invalid student credentials. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
